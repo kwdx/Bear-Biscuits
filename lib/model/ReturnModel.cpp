@@ -14,14 +14,11 @@ void ReturnModel::GetOutput(std::string * output, BaseModel * model)
 	PrettyWriter<StringBuffer> writer(buffer);
     writer.StartObject();
     writer.String("status");
-    writer.String("status");
+    writer.Int(this->status);
     if (model != NULL) {
         writer.String("object");
         model->Serialize(writer);
     }
     writer.EndObject();
     *output = buffer.GetString();
-// #if RAPIDJSON_HAS_STDSTRING
-// #else
-// #endif
 }
