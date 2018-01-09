@@ -24,7 +24,10 @@ string fcgi_env[19] = {
     "SERVER_NAME"
 };
 
-int get_fcgi_env(map<string, string> &r)
+/*
+ * 环境变量列表
+ */
+int get_fcgi_env_list(map<string, string> &r)
 {
     int i = 0;
     for (int i = 0; i < 19; ++i) {
@@ -37,4 +40,16 @@ int get_fcgi_env(map<string, string> &r)
         }
     }
     return 1;
+}
+
+/*
+ * 根据key获取环境变量
+ */
+string get_fcgi_env(string key)
+{
+    char *r = getenv(key.c_str());
+    if (r) {
+        return r;
+    }
+    return "";
 }

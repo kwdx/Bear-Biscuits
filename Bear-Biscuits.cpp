@@ -7,11 +7,14 @@
 //
 
 #include <iostream>
+using namespace std;
+
 #include <fcgi_stdio.h>
 #include <time.h>
-#include <map>
 #include "core/env.h"
 #include "core/constant.h"
+#include <map>
+#include "include/bb_request/Request.h"
 
 int main(int argc, const char * argv[])
 {
@@ -20,22 +23,16 @@ int main(int argc, const char * argv[])
     {
         FCGI_printf( "Status: 200 OK\r\n" );
         FCGI_printf( "Content-type: text/html; charset=utf-8\r\n\r\n" );
-        map<string, string> r;
-        get_fcgi_env(r);
-        for (int i = 0; i < 19; ++i) {
-            FCGI_printf("%s: %s%s",
-                fcgi_env[i].c_str(), r[fcgi_env[i]].c_str(), DS);
-        }
-        const char *path = r["REQUEST_URI"].c_str();
-        FCGI_printf("请求的接口路径: %s%s", path, DS);
-        const char *d = "/";
-        char *p = strtok((char *)path, d);
-        FCGI_printf( "分解的接口路径: " );
-        while (p) {
-            FCGI_printf( " %s ", p );
-            p = strtok(NULL, d);
-        }
-        FCGI_printf("%s", DS);
+        const char *path = get_fcgi_env("DOCUMENT_URI").c_str();
+        FCGI_printf("请求的接口路径: %s %s", path, NL);
+        const char *method = Request::method().c_str();
+        FCGI_printf("请求的方法: %s %s", method, NL);
+        map<string, string> args = Request::args();
+        FCGI_printf("get hello: %s %s", args["hello"].c_str(), NL);
+        FCGI_printf("get world: %s %s", args["world"].c_str(), NL);
+        string args_dumps_s = Request::print_args();
+        const char *args_dumps = args_dumps_s.c_str();
+        FCGI_printf("get请求的完整args: %s %s", args_dumps, NL);
     }
     return 0;
 }
