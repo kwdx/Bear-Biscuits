@@ -1,4 +1,5 @@
 #include <map>
+#include <vector>
 using namespace std;
 
 class Request
@@ -12,11 +13,17 @@ public:
     static map<string, string> args();
     // string形式返回GET的结果(供打印)
     static string print_args();
+    // 分解url path
+    static vector<string> path();
+    // string形式返回path(供打印)
+    static string print_path();
 private:
     // 静态方法，不允许实例化对象
     Request() {}
     // string形式返回map<string, string>的自定义方法(供打印)
-    static string print_ssmap(map <string, string>);
+    static string print_ssmap(map<string, string>);
+    // string形式返回vector<string>的自定义方法(供打印)
+    static string print_svec(vector<string>);
 };
 
 string Request::method()
@@ -64,12 +71,57 @@ string Request::print_args()
     return sa;
 }
 
-string Request::print_ssmap(map <string, string> m) {
+string Request::print_ssmap(map<string, string> m) {
     // 迭代器
     map<string, string>::iterator it;
     string res = "";
     for (it = m.begin(); it != m.end(); ++it) {
         res += "[" + it->first + "] => [" + it->second + "], ";
+    }
+    return res;
+}
+
+vector<string> Request::path()
+{
+    string document_uri = get_fcgi_env("DOCUMENT_URI");
+    unsigned int ssize = document_uri.size();
+    // 不是以 / 结尾的path，加上 /
+    if ('/' != document_uri[ssize - 1]) {
+        document_uri += "/";
+        ++ ssize;
+    }
+    vector<string> res;
+    // 去掉头部的 /
+    for(unsigned int i = 1; i < ssize; /* empty oper */)
+    {
+        unsigned int pos = i;
+        unsigned int len = 0;
+        while (i < ssize) {
+            if ('/' != document_uri[i++]) {
+                ++ len;
+                continue;
+            }
+            break;
+        }
+        string s = document_uri.substr(pos, len);
+        res.push_back(s);
+    }
+    return res;
+}
+
+string Request::print_path()
+{
+    vector<string> v = Request::path();
+    string sa = Request::print_svec(v);
+    return sa;
+}
+
+string Request::print_svec(vector<string> v) {
+    // 迭代器
+    vector<string>::iterator it;
+    string res = "";
+    for (it = v.begin(); it != v.end(); ++it) {
+        res += "[" + (*it) + "], ";
     }
     return res;
 }

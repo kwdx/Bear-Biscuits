@@ -15,6 +15,7 @@ using namespace std;
 #include "core/constant.h"
 #include <map>
 #include "include/bb_request/Request.h"
+#include "include/common/crypt.h"
 
 int main(int argc, const char * argv[])
 {
@@ -31,8 +32,11 @@ int main(int argc, const char * argv[])
         FCGI_printf("get hello: %s %s", args["hello"].c_str(), NL);
         FCGI_printf("get world: %s %s", args["world"].c_str(), NL);
         string args_dumps_s = Request::print_args();
-        const char *args_dumps = args_dumps_s.c_str();
+        const char *args_dumps = UrlDecode(args_dumps_s).c_str();
         FCGI_printf("get请求的完整args: %s %s", args_dumps, NL);
+        string path_dumps_s = Request::print_path();
+        const char *path_dumps = UrlDecode(path_dumps_s).c_str();
+        FCGI_printf("path分解: %s %s", path_dumps, NL);
     }
     return 0;
 }
