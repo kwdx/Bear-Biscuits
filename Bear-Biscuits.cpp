@@ -14,6 +14,7 @@ using namespace std;
 #include "core/env.h"
 #include "core/constant.h"
 #include <map>
+// 这些不要去include 库里面的内容，到时候提取出来
 #include "include/bb_request/Request.h"
 #include "include/common/crypt.h"
 
@@ -29,14 +30,12 @@ int main(int argc, const char * argv[])
         const char *method = Request::method().c_str();
         FCGI_printf("请求的方法: %s %s", method, NL);
         map<string, string> args = Request::args();
-        FCGI_printf("get hello: %s %s", args["hello"].c_str(), NL);
-        FCGI_printf("get world: %s %s", args["world"].c_str(), NL);
+        FCGI_printf("get hello: %s %s", UrlDecode(args["hello"]).c_str(), NL);
+        FCGI_printf("get world: %s %s", UrlDecode(args["world"]).c_str(), NL);
         string args_dumps_s = Request::print_args();
-        const char *args_dumps = UrlDecode(args_dumps_s).c_str();
-        FCGI_printf("get请求的完整args: %s %s", args_dumps, NL);
+        FCGI_printf("get请求的完整args: %s %s", UrlDecode(args_dumps_s).c_str(), NL);
         string path_dumps_s = Request::print_path();
-        const char *path_dumps = UrlDecode(path_dumps_s).c_str();
-        FCGI_printf("path分解: %s %s", path_dumps, NL);
+        FCGI_printf("path分解: %s %s", UrlDecode(path_dumps_s).c_str(), NL);
     }
     return 0;
 }
