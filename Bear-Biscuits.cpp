@@ -17,12 +17,14 @@ using namespace std;
 // 这些不要去include 库里面的内容，到时候提取出来
 #include "include/bb_request/Request.h"
 #include "include/common/crypt.h"
+#include "config/routes.h"
 
 int main(int argc, const char * argv[])
 {
     // insert code here...
     while(FCGI_Accept() >= 0)
     {
+        routes_register();
         FCGI_printf( "Status: 200 OK\r\n" );
         FCGI_printf( "Content-type: text/html; charset=utf-8\r\n\r\n" );
         const char *path = get_fcgi_env("DOCUMENT_URI").c_str();
@@ -36,6 +38,7 @@ int main(int argc, const char * argv[])
         FCGI_printf("get请求的完整args: %s %s", UrlDecode(args_dumps_s).c_str(), NL);
         string path_dumps_s = Request::print_path();
         FCGI_printf("path分解: %s %s", UrlDecode(path_dumps_s).c_str(), NL);
+        FCGI_printf("path route match: %s %s", Route::match(Request::path()).c_str(), NL);
     }
     return 0;
 }

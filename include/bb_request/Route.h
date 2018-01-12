@@ -4,9 +4,9 @@ using namespace std;
 
 typedef struct RouteRule
 {
-    string rule,
-    map<string, string> match,
-    vector<string> methods
+    string rule;
+    map<string, string> match;
+    vector<string> methods;
 } RouteRule, *RR;
 
 class Route
@@ -23,11 +23,13 @@ class Route
             string rule, string controller, string action, int methods = 1
         );
         // 匹配路由(注意优先顺序)，且有默认路由。与rule拆解的内容同名
-        static int match(vector<string> path);
+        static string match(vector<string> path);
     private:
         static int get_bit(int binary, int n);
-        static vector<string> path(string document_uri)
+        static vector<string> path(string document_uri);
 };
+
+map<string, RR> Route::rule_table;
 
 int Route::connect(string rule, map<string, string> match, vector<string> methods)
 {
@@ -40,7 +42,7 @@ int Route::connect(string rule, map<string, string> match, vector<string> method
     RR rr;
     rr->rule = rule;
     rr->match = match;
-    r->methods = methods;
+    rr->methods = methods;
     Route::rule_table[rule] = rr;
     return 1;
 }
@@ -61,13 +63,14 @@ int Route::connect(string rule, string controller, string action, int methods)
     return Route::connect(rule, match, methods_v);
 }
 
-int Route::match(vector<string> path)
+string Route::match(vector<string> path)
 {
     /////////// todo!!!!
     // 匹配的规则串
     string match = "";
     // 请求的url的分节
     unsigned int psize = path.size();
+    map<string, RR> m = Route::rule_table;
     map<string, RR>::iterator it;
     for (it = m.begin(); it != m.end(); ++it) {
         vector<string> rr_path = Route::path(it->first);
@@ -75,7 +78,7 @@ int Route::match(vector<string> path)
             continue;
         }
         if (psize < 1) {
-            return -1;
+            return "";
         }
         unsigned int i = 0;
         for( ; i < psize; ++i) {
@@ -102,15 +105,24 @@ int Route::match(vector<string> path)
                 var_type = "string";
                 // todo check type and convert
                 // if not check then break
+                ///////// todo
+                if (false) {
+                    break;
+                }
             } else {
                 // 字符串
-                // eq
                 // if not eq then break
+                if (rr_path[i] != path[i]) break;
             }
         }
         // check i == psize for matching, then setval to string 'match' and break
+        if (i == psize) {
+            match = rr_path[i];
+            break;
+        }
     }
     // no params and match default rule "controller/action"
+    return match;
 }
 
 int Route::get_bit(int binary, int n)
