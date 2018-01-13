@@ -39,7 +39,8 @@ int Route::connect(string rule, map<string, string> match, vector<string> method
     if (methods.empty()) {
         methods.push_back("GET");
     }
-    RR rr;
+    // RR是指针变量，需要动态分配
+    RR rr = new RouteRule();
     rr->rule = rule;
     rr->match = match;
     rr->methods = methods;
@@ -65,7 +66,6 @@ int Route::connect(string rule, string controller, string action, int methods)
 
 string Route::match(vector<string> path)
 {
-    /////////// todo!!!!
     // 匹配的规则串
     string match = "";
     // 请求的url的分节
@@ -117,7 +117,7 @@ string Route::match(vector<string> path)
         }
         // check i == psize for matching, then setval to string 'match' and break
         if (i == psize) {
-            match = rr_path[i];
+            match = it->first;
             break;
         }
     }

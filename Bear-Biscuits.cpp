@@ -24,9 +24,9 @@ int main(int argc, const char * argv[])
     // insert code here...
     while(FCGI_Accept() >= 0)
     {
-        routes_register();
         FCGI_printf( "Status: 200 OK\r\n" );
         FCGI_printf( "Content-type: text/html; charset=utf-8\r\n\r\n" );
+        routes_register();
         const char *path = get_fcgi_env("DOCUMENT_URI").c_str();
         FCGI_printf("请求的接口路径: %s %s", path, NL);
         const char *method = Request::method().c_str();
@@ -38,6 +38,7 @@ int main(int argc, const char * argv[])
         FCGI_printf("get请求的完整args: %s %s", UrlDecode(args_dumps_s).c_str(), NL);
         string path_dumps_s = Request::print_path();
         FCGI_printf("path分解: %s %s", UrlDecode(path_dumps_s).c_str(), NL);
+        // 这里有个显示问题，显示<int:name>的时候，会被html解析掉，之后修复
         FCGI_printf("path route match: %s %s", Route::match(Request::path()).c_str(), NL);
     }
     return 0;
