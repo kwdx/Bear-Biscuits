@@ -33,4 +33,7 @@
 *.app
 
 # cgi
-index.cgi
+*.cgi
+
+# other
+.vscode/
