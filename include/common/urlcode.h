@@ -16,9 +16,9 @@ unsigned char FromHex(unsigned char x)
     return y;
 }
 
-std::string UrlEncode(const std::string& str)
+string UrlEncode(const string& str)
 {
-    std::string strTemp = "";
+    string strTemp = "";
     int length = str.length();
     for (int i = 0; i < length; i++)
     {
@@ -40,9 +40,9 @@ std::string UrlEncode(const std::string& str)
     return strTemp;
 }
 
-std::string UrlDecode(const std::string& str)
+string UrlDecode(const string& str)
 {
-    std::string strTemp = "";
+    string strTemp = "";
     int length = str.length();
     for (int i = 0; i < length; i++)
     {

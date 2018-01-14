@@ -1,5 +1,7 @@
 #include <vector>
 #include <map>
+#include <cctype>
+#include <stdlib.h>
 using namespace std;
 
 typedef struct RouteRule
@@ -12,7 +14,9 @@ typedef struct RouteRule
 class Route
 {
     public:
-        // 规则表，key=rule, value=struct RouteRule
+        // 规则的顺序，value=rule
+        static vector<string> rule_rank;
+        // 规则表，key=rule, value=struct RouteRule。顺序由rule_rank决定
         static map<string, RR> rule_table;
         // 注册路由
         static int connect(
@@ -24,10 +28,14 @@ class Route
         );
         // 匹配路由(注意优先顺序)，且有默认路由。与rule拆解的内容同名
         static string match(vector<string> path);
+        // 分配到对应的方法中
+        static string dispatch(RR rule, map<string, string> params);
     private:
         static int get_bit(int binary, int n);
         static vector<string> path(string document_uri);
 };
+
+vector<string> Route::rule_rank;
 
 map<string, RR> Route::rule_table;
 
@@ -45,6 +53,7 @@ int Route::connect(string rule, map<string, string> match, vector<string> method
     rr->match = match;
     rr->methods = methods;
     Route::rule_table[rule] = rr;
+    Route::rule_rank.push_back(rule);
     return 1;
 }
 
@@ -70,10 +79,12 @@ string Route::match(vector<string> path)
     string match = "";
     // 请求的url的分节
     unsigned int psize = path.size();
-    map<string, RR> m = Route::rule_table;
+    unsigned int rank_size = Route::rule_rank.size();
     map<string, RR>::iterator it;
-    for (it = m.begin(); it != m.end(); ++it) {
-        vector<string> rr_path = Route::path(it->first);
+    // for (it = m.begin(); it != m.end(); ++it) {
+    for (int m = 0; m < rank_size; ++m) {
+        string rr_string = Route::rule_rank[m];
+        vector<string> rr_path = Route::path(rr_string);
         if (rr_path.size() != psize) {
             continue;
         }
@@ -101,12 +112,45 @@ string Route::match(vector<string> path)
                     }
                 }
                 // 缺省type的变量规则，如 <name>，代表 <string:name>
-                var_name = var_type;
-                var_type = "string";
-                // todo check type and convert
+                if (!var_ds) {
+                    var_name = var_type;
+                    var_type = "string";
+                }
                 // if not check then break
-                ///////// todo
-                if (false) {
+                // 目前支持string、int、float
+                unsigned int pi_size = path[i].size();
+                if (var_type == "int") {
+                    if (path[i][0] == '0' && pi_size > 1) break;
+                    int j = 0;
+                    for ( ; j < pi_size; ++j) {
+                        if (!isdigit(path[i][j])) break;
+                    }
+                    if (j != pi_size) break;
+                } else if (var_type == "float") {
+                    // 是否有小数点
+                    int point = 0;
+                    string var_integer = "";
+                    string var_decimal = "";
+                    int j = 0;
+                    for ( ; j < pi_size; ++j) {
+                        if (point) {
+                            if (!isdigit(path[i][j])) break;
+                            var_decimal += path[i][j];
+                        } else {
+                            if (isdigit(path[i][j])) {
+                                var_integer += path[i][j];
+                            } else if (path[i][j] == '.') {
+                                point = 1;
+                            } else {
+                                break;
+                            }
+                        }
+                    }
+                    if (j != pi_size) break;
+                    if (var_integer[0] == '0' && var_integer.size() > 1) break;
+                } else if (var_type == "string") {
+                    // ok
+                } else {
                     break;
                 }
             } else {
@@ -117,12 +161,18 @@ string Route::match(vector<string> path)
         }
         // check i == psize for matching, then setval to string 'match' and break
         if (i == psize) {
-            match = it->first;
+            match = rr_string;
             break;
         }
     }
     // no params and match default rule "controller/action"
     return match;
+}
+
+string Route::dispatch(RR rule, map<string, string> params)
+{
+    // 调度，供Route::match调用 todo
+    return "";
 }
 
 int Route::get_bit(int binary, int n)

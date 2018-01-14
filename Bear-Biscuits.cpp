@@ -16,7 +16,8 @@ using namespace std;
 #include <map>
 // 这些不要去include 库里面的内容，到时候提取出来
 #include "include/bb_request/Request.h"
-#include "include/common/crypt.h"
+#include "include/common/urlcode.h"
+#include "include/common/htmlspecialchar.h"
 #include "config/routes.h"
 
 int main(int argc, const char * argv[])
@@ -38,8 +39,7 @@ int main(int argc, const char * argv[])
         FCGI_printf("get请求的完整args: %s %s", UrlDecode(args_dumps_s).c_str(), NL);
         string path_dumps_s = Request::print_path();
         FCGI_printf("path分解: %s %s", UrlDecode(path_dumps_s).c_str(), NL);
-        // 这里有个显示问题，显示<int:name>的时候，会被html解析掉，之后修复
-        FCGI_printf("path route match: %s %s", Route::match(Request::path()).c_str(), NL);
+        FCGI_printf("path route match: %s %s", htmlspecialchar_escape(Route::match(Request::path())).c_str(), NL);
     }
     return 0;
 }

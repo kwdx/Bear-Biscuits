@@ -13,7 +13,8 @@ int routes_register() {
     Route::connect("/hello/world", match, methods);
 
     Route::connect("/hello/world/<int:name>", "hello", "world_alias", 1);
-
+    Route::connect("/hello/world/<float:name>", "hello", "world_alias", 1);
     Route::connect("/hello/world/<string:name>", "hello", "world_alias", 3);
+    Route::connect("/hello/world/<name>", "hello", "world_alias", 3);
     return 0;
 }
