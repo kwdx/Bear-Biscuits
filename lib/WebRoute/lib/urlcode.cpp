@@ -1,5 +1,4 @@
-#include <ctype.h>
-using namespace std;
+#include "../include/urlcode.h"
 
 unsigned char ToHex(unsigned char x) 
 { 

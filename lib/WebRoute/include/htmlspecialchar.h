@@ -1,6 +1,9 @@
 #include <map>
 using namespace std;
 
+#ifndef HTMLSPECIALCHAE_H
+#define HTMLSPECIALCHAE_H
+
 /*
 Special Character   Escape Sequence Purpose  
 &                   &amp;           Ampersand sign 
@@ -42,3 +45,5 @@ string htmlspecialchar_escape(string raw)
     }
     return res;
 }
+
+#endif

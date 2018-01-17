@@ -1,5 +1,8 @@
 #include "BaseModel.h"
 
+#ifndef BBUSERMODEL_H
+#define BBUSERMODEL_H
+
 class BBUserModel: public BaseModel
 {
     public:
@@ -24,3 +27,4 @@ class BBUserModel: public BaseModel
         long int user_id;       // 用户id
 };
 
+#endif

@@ -6,7 +6,8 @@
 
 if [ $1 = "start" ]; then
     echo "正在打开..."
-    g++ -o index.cgi Bear-Biscuits.cpp -L /usr/local/lib/ -lfcgi
+    # g++ -o index.cgi Bear-Biscuits.cpp -L /usr/local/lib/ -lfcgi
+    make
     spawn-fcgi -a 127.0.0.1 -p 8081 -u www -f ./index.cgi -F 1 -P /tmp/fcgi.pid
 elif [ $1 = "stop" ]; then
     if [ -f "/tmp/fcgi.pid" -a -s "/tmp/fcgi.pid" ]; then

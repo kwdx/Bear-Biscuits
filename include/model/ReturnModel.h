@@ -1,5 +1,8 @@
 #include "BaseModel.h"
 
+#ifndef RETURNMODEL_H
+#define RETURNMODEL_H
+
 class ReturnModel: public BaseModel
 {
     public:
@@ -9,3 +12,5 @@ class ReturnModel: public BaseModel
 private:
     int status; // 状态
 };
+
+#endif

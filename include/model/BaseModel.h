@@ -1,9 +1,11 @@
 #include <iostream>
-#pragma once  
 #include "../rapidjson/prettywriter.h"
 #include "../rapidjson/document.h"
 
 using namespace rapidjson;
+
+#ifndef BASEMODEL_H
+#define BASEMODEL_H
 
 class BaseModel 
 {
@@ -13,3 +15,5 @@ public:
 	{
 	}
 };
+
+#endif

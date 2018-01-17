@@ -1,3 +1,5 @@
+#include <string>
+using namespace std;
 /* 项目常量 */
 
 /* 目录 */
@@ -7,3 +9,10 @@
 
 /* 其他 */
 #define     NL          "<br/>"
+
+#ifndef CONSTANT_H
+#define CONSTANT_H
+
+extern string fcgi_env[19];
+
+#endif
