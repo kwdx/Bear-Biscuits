@@ -20,33 +20,34 @@
 # 	g++ -o index.cgi Bear-Biscuits.cpp -L /usr/local/lib/ -lfcgi
 
 CFLAGS = -Wall -O -g
+G++ = g++ -std=c++11 $(CFLAGS)
 FCGILIB = -lfcgi
 
 index.cgi:Bear-Biscuits.cpp libwebroute.a
-	g++ -o index.cgi Bear-Biscuits.cpp libwebroute.a -L /usr/local/lib/ -lfcgi
+	$(G++) -o index.cgi Bear-Biscuits.cpp libwebroute.a -L /usr/local/lib/ -lfcgi
 
 libwebroute.a:BaseController.o Request.o env.o constant.o Factory.o urlcode.o Route.o
 	ar crv libwebroute.a BaseController.o Request.o env.o constant.o Factory.o urlcode.o Route.o
 BaseController.o:lib/WebRoute/lib/BaseController.cpp Request.o env.o constant.o urlcode.o
-	g++ -c lib/WebRoute/lib/BaseController.cpp Request.o env.o constant.o urlcode.o -o BaseController.o
+	$(G++) -c lib/WebRoute/lib/BaseController.cpp Request.o env.o constant.o urlcode.o -o BaseController.o
 Request.o:lib/WebRoute/lib/Request.cpp env.o
-	g++ -c lib/WebRoute/lib/Request.cpp env.o
+	$(G++) -c lib/WebRoute/lib/Request.cpp env.o
 Factory.o:lib/WebRoute/lib/Factory.cpp
-	g++ -c lib/WebRoute/lib/Factory.cpp
+	$(G++) -c lib/WebRoute/lib/Factory.cpp
 env.o:lib/WebRoute/lib/env.cpp
-	g++ $(CFLAGS) -c lib/WebRoute/lib/env.cpp $(FCGILIB)
+	$(G++) -c lib/WebRoute/lib/env.cpp $(FCGILIB)
 urlcode.o:lib/WebRoute/lib/urlcode.cpp
-	g++ -c lib/WebRoute/lib/urlcode.cpp
+	$(G++) -c lib/WebRoute/lib/urlcode.cpp
 Route.o:lib/WebRoute/lib/Route.cpp
-	g++ -c lib/WebRoute/lib/Route.cpp
+	$(G++) -c lib/WebRoute/lib/Route.cpp
 constant.o:lib/WebRoute/lib/constant.cpp
-	g++ -c lib/WebRoute/lib/constant.cpp
+	$(G++) -c lib/WebRoute/lib/constant.cpp
 
 # constant.o:lib/WebRoute/lib/constant.cpp
 # 	g++ -c lib/WebRoute/lib/constant.cpp
 
 clean:
-	rm -f *.o
+	rm -f *.o index.cgi
 
 
 
